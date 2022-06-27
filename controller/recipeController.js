@@ -34,6 +34,7 @@ const insertNewRecipe = async (req, res) => {
 	try {
 		const { user_id, title, ingredients, video_link } = req.body;
 		const recipe_images = req?.file?.path || 'images/default.jpg';
+
 		if (ingredients.length > 255) {
 			res.status(400).send('exceed the maximum capacity, ingredients must be less than 255 characters');
 		} else {
@@ -45,7 +46,25 @@ const insertNewRecipe = async (req, res) => {
 			}
 		}
 	} catch (error) {
+		console.log(error);
 		res.status(400).send('Program error!!!');
+	}
+};
+
+const recipeTrending = async (req, res) => {
+	try {
+		const getDataTrending = await model.getRecipeTrending();
+		if (getDataTrending.rowCount > 0) {
+			res.send({
+				totel_data: getDataTrending.rowCount,
+				result: getDataTrending.rows,
+			});
+		} else {
+			res.status(404).send('Data not found');
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(400).send('Program error');
 	}
 };
 
@@ -103,4 +122,4 @@ const deleteDataRecipe = async (req, res) => {
 	}
 };
 
-module.exports = { getAllDataRecipe, insertNewRecipe, getDataByTitle, getDataWithComment, updateRecipe, deleteDataRecipe };
+module.exports = { getAllDataRecipe, insertNewRecipe, recipeTrending, getDataByTitle, getDataWithComment, updateRecipe, deleteDataRecipe };

@@ -1,8 +1,9 @@
 const express = require('express');
+require('dotenv').config();
 const app = express();
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
-const port = 8000;
+const port = process.env.PORT;
 const cors = require('cors');
 
 const users = require('./routes/usersRoutes');

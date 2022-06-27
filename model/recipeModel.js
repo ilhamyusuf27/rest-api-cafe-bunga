@@ -83,6 +83,18 @@ const getDataById = (user_id) => {
 	});
 };
 
+const getRecipeTrending = () => {
+	return new Promise((resolve, reject) => {
+		db.query('SELECT * FROM recipe ORDER BY recipe_id DESC LIMIT 5', (error, result) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(result);
+			}
+		});
+	});
+};
+
 const updateDataRecipe = (props) => {
 	return new Promise((resolve, reject) => {
 		db.query('UPDATE recipe SET title = $1, ingredients = $2, video_link = $3 WHERE recipe_id = $4', [props.title, props.ingredients, props.video_link, props.recipe_id], (error, result) => {
@@ -107,4 +119,4 @@ const deleteRecipe = (recipe_id) => {
 	});
 };
 
-module.exports = { getAllData, getDataPerPage, insertDataRecipe, getDataByName, getDataWithComment, getDataById, updateDataRecipe, deleteRecipe };
+module.exports = { getAllData, getDataPerPage, insertDataRecipe, getRecipeTrending, getDataByName, getDataWithComment, getDataById, updateDataRecipe, deleteRecipe };

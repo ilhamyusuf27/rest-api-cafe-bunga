@@ -51,8 +51,20 @@ const insertNewUser = async (req, res) => {
 			}
 		}
 	} catch (error) {
-		console.log(error);
-		res.status(400).send('Program error!');
+		if (error.constraint === 'uc_email') {
+			res.status(401).send('Email already exist');
+		}
+		res.send('error');
+	}
+};
+
+const addUser = (req, res) => {
+	try {
+		const { name } = req.body;
+		console.log(name);
+		res.send(name);
+	} catch (error) {
+		res.send(error);
 	}
 };
 
@@ -84,7 +96,6 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
 	try {
 		const { user_id } = req.body;
-		console.log(user_id);
 		const getData = await model.getDataById(user_id);
 		if (getData.rowCount > 0) {
 			const deleteData = await model.deleteDataUser(user_id);
@@ -98,4 +109,4 @@ const deleteUser = async (req, res) => {
 	}
 };
 
-module.exports = { getDataUsers, getDataById, insertNewUser, updateUser, deleteUser };
+module.exports = { getDataUsers, getDataById, updateUser, deleteUser, addUser, insertNewUser };

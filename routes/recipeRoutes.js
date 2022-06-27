@@ -1,20 +1,10 @@
 const Router = require('express').Router();
 const controller = require('../controller/recipeController');
-const multer = require('multer');
-
-const fileStorage = multer.diskStorage({
-	destination: (req, file, cb) => {
-		cb(null, './images/recipes/');
-	},
-	filename: (req, file, cb) => {
-		cb(null, new Date().getTime() + '-' + file.originalname);
-	},
-});
-
-const upload = multer({ storage: fileStorage });
+const recipeUpload = require('../middleware/recipeUpload');
 
 Router.get('/recipes', controller.getAllDataRecipe);
-Router.post('/recipes/add', upload.single('recipe_images'), controller.insertNewRecipe);
+Router.post('/recipes/add', recipeUpload, controller.insertNewRecipe);
+Router.get('/recipe/trending', controller.recipeTrending);
 Router.get('/recipes/find', controller.getDataByTitle);
 Router.get('/recipes/comments', controller.getDataWithComment);
 Router.patch('/recipes/edit', controller.updateRecipe);
