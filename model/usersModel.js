@@ -14,7 +14,7 @@ const getAllData = () => {
 
 const getAllDataPagination = (params) => {
 	return new Promise((resolve, reject) => {
-		db.query('SELECT * FROM users LIMIT $2 OFFSET (($1 -1) * $2)', [params.currentPage, params.limit], (error, result) => {
+		db.query('SELECT * FROM users ORDER BY user_id ASC LIMIT $2 OFFSET (($1 -1) * $2)', [params.currentPage, params.limit], (error, result) => {
 			if (error) {
 				reject(error);
 			} else {
@@ -27,6 +27,18 @@ const getAllDataPagination = (params) => {
 const getDataById = (id) => {
 	return new Promise((resolve, reject) => {
 		db.query('SELECT * FROM users WHERE user_id = $1', [id], (error, result) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(result);
+			}
+		});
+	});
+};
+
+const getDataByEmail = (email) => {
+	return new Promise((resolve, reject) => {
+		db.query('SELECT * FROM users WHERE email = $1', [email], (error, result) => {
 			if (error) {
 				reject(error);
 			} else {
@@ -55,8 +67,8 @@ const insertDataUser = (props) => {
 const updateDataUser = (props) => {
 	return new Promise((resolve, reject) => {
 		db.query(
-			'UPDATE users SET name = $1, phone_number = $2, email = $3, password = $4 WHERE user_id = $5',
-			[props.name, props.phone_number, props.email, props.password, props.user_id],
+			'UPDATE users SET name = $1, phone_number = $2, email = $3, photo_profil = $4 WHERE user_id = $5',
+			[props.name, props.phone_number, props.email, props.photo_profil, props.user_id],
 			(error, result) => {
 				if (error) {
 					reject(error);
@@ -80,4 +92,4 @@ const deleteDataUser = (user_id) => {
 	});
 };
 
-module.exports = { getAllData, getDataById, insertDataUser, updateDataUser, deleteDataUser, getAllDataPagination };
+module.exports = { getAllData, getDataById, getDataByEmail, insertDataUser, updateDataUser, deleteDataUser, getAllDataPagination };

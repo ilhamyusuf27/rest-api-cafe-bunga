@@ -15,7 +15,7 @@ const getAllData = () => {
 const getDataPerPage = (params) => {
 	return new Promise((resolve, reject) => {
 		db.query(
-			'SELECT recipe.*, users.name AS author FROM recipe LEFT JOIN users ON recipe.user_id = users.user_id LIMIT $2 OFFSET (($1 -1) * $2)',
+			'SELECT recipe.*, users.name AS author FROM recipe LEFT JOIN users ON recipe.user_id = users.user_id ORDER BY recipe_id ASC LIMIT $2 OFFSET (($1 -1) * $2)',
 			[params.currentPage, params.limit],
 			(error, result) => {
 				if (error) {
@@ -97,13 +97,17 @@ const getRecipeTrending = () => {
 
 const updateDataRecipe = (props) => {
 	return new Promise((resolve, reject) => {
-		db.query('UPDATE recipe SET title = $1, ingredients = $2, video_link = $3 WHERE recipe_id = $4', [props.title, props.ingredients, props.video_link, props.recipe_id], (error, result) => {
-			if (error) {
-				reject(error);
-			} else {
-				resolve(result);
-			}
-		});
+		db.query(
+			'UPDATE recipe SET title = $1, ingredients = $2, recipe_images = $3, video_link = $4 WHERE recipe_id = $5',
+			[props.title, props.ingredients, props.recipe_images, props.video_link, props.recipe_id],
+			(error, result) => {
+				if (error) {
+					reject(error);
+				} else {
+					resolve(result);
+				}
+			},
+		);
 	});
 };
 

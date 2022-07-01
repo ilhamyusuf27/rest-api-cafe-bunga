@@ -1,6 +1,12 @@
 const model = require('../model/usersModel');
-const Cryptojs = require('crypto-js');
-const { mode } = require('crypto-js');
+const bcrypt = require('bcrypt');
+const fs = require('fs');
+const { promisify } = require('util');
+
+const unlinkAsync = promisify(fs.unlink);
+
+// const Cryptojs = require('crypto-js');
+// const { mode } = require('crypto-js');
 
 const getDataUsers = async (req, res) => {
 	try {
@@ -38,48 +44,46 @@ const insertNewUser = async (req, res) => {
 		const photo_profil = req?.file?.path || 'images/users/default.jpg';
 		const passwordValidation = password === rePassword;
 		if (password.length < 8) {
+			await unlinkAsync(req.file.path);
 			res.send('Password length must be more than 8 character');
 		} else {
 			if (passwordValidation) {
-				const encryptPass = Cryptojs.AES.encrypt(password, 'secret key 123').toString();
-				const data = await model.insertDataUser({ name, phone_number, email, password: encryptPass, photo_profil });
+				const salt = bcrypt.genSaltSync(15);
+				const hash = bcrypt.hashSync(password, salt);
+				await model.insertDataUser({ name: name.trim(), phone_number: phone_number.trim(), email: email.trim(), password: hash, photo_profil });
+				const getDataByEmail = await model.getDataByEmail(email);
 				res.send({
 					message: 'Data added successfully',
+					result: getDataByEmail.rows[0],
 				});
 			} else {
+				await unlinkAsync(req.file.path);
 				res.status(401).send('Password invalid');
 			}
 		}
 	} catch (error) {
 		if (error.constraint === 'uc_email') {
+			await unlinkAsync(req.file.path);
 			res.status(401).send('Email already exist');
+		} else {
+			await unlinkAsync(req.file.path);
+			res.send('error');
 		}
-		res.send('error');
-	}
-};
-
-const addUser = (req, res) => {
-	try {
-		const { name } = req.body;
-		console.log(name);
-		res.send(name);
-	} catch (error) {
-		res.send(error);
 	}
 };
 
 const updateUser = async (req, res) => {
 	try {
 		const { user_id, name, phone_number, email } = req.body;
-		let { password } = req.body;
-		password = Cryptojs.AES.encrypt(password, 'secret key 123').toString();
+		const photo_profil = req?.file?.path;
+
 		const checkData = await model.getDataById(user_id);
 		if (checkData.rowCount > 0) {
 			let inputName = name || checkData.rows[0]?.name;
 			let inputPhoneNumber = phone_number || checkData.rows[0]?.phone_number;
 			let inputEmail = email || checkData.rows[0]?.email;
-			let inputPassword = password || checkData.rows[0]?.password;
-			const updateData = await model.updateDataUser({ name: inputName, phone_number: inputPhoneNumber, email: inputEmail, password: inputPassword, user_id });
+			let inputPhoto = photo_profil || checkData.rows[0]?.photo_profil;
+			const updateData = await model.updateDataUser({ name: inputName, phone_number: inputPhoneNumber, email: inputEmail, photo_profil: inputPhoto, user_id });
 			if (updateData) {
 				res.send('Data berhasil diubah');
 			} else {
@@ -89,6 +93,7 @@ const updateUser = async (req, res) => {
 			res.status(404).send('Data not found');
 		}
 	} catch (error) {
+		console.log(error);
 		res.status(400).send('Program error!');
 	}
 };
@@ -109,4 +114,4 @@ const deleteUser = async (req, res) => {
 	}
 };
 
-module.exports = { getDataUsers, getDataById, updateUser, deleteUser, addUser, insertNewUser };
+module.exports = { getDataUsers, getDataById, updateUser, deleteUser, insertNewUser };

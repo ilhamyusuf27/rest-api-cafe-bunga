@@ -1,5 +1,11 @@
 const e = require('express');
 const model = require('../model/recipeModel');
+const userModel = require('../model/usersModel');
+
+const fs = require('fs');
+const { promisify } = require('util');
+
+const unlinkAsync = promisify(fs.unlink);
 
 const getAllDataRecipe = async (req, res) => {
 	try {
@@ -34,19 +40,27 @@ const insertNewRecipe = async (req, res) => {
 	try {
 		const { user_id, title, ingredients, video_link } = req.body;
 		const recipe_images = req?.file?.path || 'images/default.jpg';
-
-		if (ingredients.length > 255) {
-			res.status(400).send('exceed the maximum capacity, ingredients must be less than 255 characters');
+		const getDataById = await userModel.getDataById(user_id);
+		if (getDataById.rowCount === 0) {
+			await unlinkAsync(req.file.path);
+			res.status(404).send('User id not found');
 		} else {
-			const data = await model.insertDataRecipe({ user_id, title, ingredients, recipe_images, video_link });
-			if (data) {
-				res.send('Data berhasil ditambah');
+			if (ingredients.length > 255) {
+				await unlinkAsync(req.file.path);
+				res.status(400).send('exceed the maximum capacity, ingredients must be less than 255 characters');
 			} else {
-				res.status(400).send('Data failed to add');
+				const data = await model.insertDataRecipe({ user_id, title, ingredients, recipe_images, video_link });
+				if (data) {
+					res.send('Data berhasil ditambah');
+				} else {
+					await unlinkAsync(req.file.path);
+					res.status(400).send('Data failed to add');
+				}
 			}
 		}
 	} catch (error) {
 		console.log(error);
+		await unlinkAsync(req.file.path);
 		res.status(400).send('Program error!!!');
 	}
 };
@@ -87,13 +101,15 @@ const getDataByTitle = async (req, res) => {
 const updateRecipe = async (req, res) => {
 	try {
 		const { recipe_id, title, ingredients, video_link } = req.body;
+		const recipe_images = req?.file?.path;
 
 		const checkData = await model.getDataById(recipe_id);
 		if (checkData.rowCount > 0) {
 			let inputTitle = title || checkData.rows[0]?.title;
 			let inputIngredients = ingredients || checkData.rows[0]?.ingredients;
+			let inputImages = recipe_images || checkData.rows[0]?.recipe_images;
 			let inputVideoLink = video_link || checkData.rows[0]?.video_link;
-			const updateData = await model.updateDataRecipe({ title: inputTitle, ingredients: inputIngredients, video_link: inputVideoLink, recipe_id });
+			const updateData = await model.updateDataRecipe({ title: inputTitle, ingredients: inputIngredients, recipe_images: inputImages, video_link: inputVideoLink, recipe_id });
 			if (updateData) {
 				res.send('Data berhasil diubah');
 			} else {
