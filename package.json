@@ -20,7 +20,8 @@
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
-    "test": "standard && node my-tests.js"
+    "test": "standard && node my-tests.js",
+    "start": "nodemon index"
   },
   "repository": {
     "type": "git",
