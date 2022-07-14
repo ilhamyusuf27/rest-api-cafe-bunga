@@ -1,12 +1,12 @@
 const { Pool, Client } = require('pg');
 require('dotenv').config();
 
-console.log(process.env.DB_URI);
+// console.log(process.env.DB_URI);
 
 let connection;
 
 if (process.env.ENV_MODE === 'prod') {
-	connection = new Pool({
+	connection = new Client({
 		connectionString: process.env.DATABASE_URL,
 		ssl: {
 			rejectUnauthorized: false,
