@@ -13,5 +13,23 @@
     "nodemon": "^2.0.18",
     "pg": "^8.7.3",
     "standard": "^17.0.0"
-  }
+  },
+  "name": "rest-api-cafe-bunga",
+  "description": "Tugas REST API",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "standard && node my-tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilhamyusuf27/rest-api-cafe-bunga.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ilhamyusuf27/rest-api-cafe-bunga/issues"
+  },
+  "homepage": "https://github.com/ilhamyusuf27/rest-api-cafe-bunga#readme"
 }

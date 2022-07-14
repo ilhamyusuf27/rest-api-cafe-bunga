@@ -80,6 +80,18 @@ const updateDataUser = (props) => {
 	});
 };
 
+const updateImageUser = (props) => {
+	return new Promise((resolve, reject) => {
+		db.query('UPDATE users SET photo_profil = $1 WHERE user_id = $2', [props.photo_profil, props.user_id], (error, result) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(result);
+			}
+		});
+	});
+};
+
 const deleteDataUser = (user_id) => {
 	return new Promise((resolve, reject) => {
 		db.query('DELETE FROM users WHERE user_id = $1', [user_id], (error, result) => {
@@ -92,4 +104,4 @@ const deleteDataUser = (user_id) => {
 	});
 };
 
-module.exports = { getAllData, getDataById, getDataByEmail, insertDataUser, updateDataUser, deleteDataUser, getAllDataPagination };
+module.exports = { getAllData, getDataById, getDataByEmail, insertDataUser, updateDataUser, deleteDataUser, getAllDataPagination, updateImageUser };

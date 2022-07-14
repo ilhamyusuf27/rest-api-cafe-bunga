@@ -10,12 +10,19 @@ const login = async (req, res) => {
 		if (getDataByEmail.rowCount === 0) {
 			res.status(404).send('Wrong email!');
 		} else {
+			const { user_id, name, email: email_user, photo_profil } = getDataByEmail.rows[0];
 			const checkPassword = bcrypt.compareSync(password, getDataByEmail.rows[0].password);
 			if (checkPassword) {
-				const accessToken = jwt.sign(getDataByEmail.rows[0], process.env.SECRET_KEY, { expiresIn: '1h' });
+				const accessToken = jwt.sign({ user_id, name, email_user }, process.env.SECRET_KEY, { expiresIn: '1h' });
 				res.send({
 					message: 'Login successfully',
-					Token: accessToken,
+					token: accessToken,
+					data: {
+						user_id,
+						name,
+						email_user,
+						photo_profil,
+					},
 				});
 			} else {
 				res.status(400).send('Wrong password!');

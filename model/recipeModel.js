@@ -61,7 +61,7 @@ const insertDataRecipe = (props) => {
 
 const getDataByName = (title) => {
 	return new Promise((resolve, reject) => {
-		db.query('SELECT * FROM recipe WHERE title LIKE $1', [title], (error, result) => {
+		db.query('SELECT * FROM recipe WHERE LOWER(title) LIKE $1', [title], (error, result) => {
 			if (error) {
 				reject(error);
 			} else {
@@ -85,7 +85,7 @@ const getDataById = (user_id) => {
 
 const getRecipeTrending = () => {
 	return new Promise((resolve, reject) => {
-		db.query('SELECT * FROM recipe ORDER BY recipe_id DESC LIMIT 5', (error, result) => {
+		db.query('SELECT * FROM recipe ORDER BY recipe_id DESC', (error, result) => {
 			if (error) {
 				reject(error);
 			} else {
@@ -123,4 +123,39 @@ const deleteRecipe = (recipe_id) => {
 	});
 };
 
-module.exports = { getAllData, getDataPerPage, insertDataRecipe, getRecipeTrending, getDataByName, getDataWithComment, getDataById, updateDataRecipe, deleteRecipe };
+const getRecipeByUserId = (user_id) => {
+	return new Promise((resolve, reject) => {
+		db.query('SELECT * FROM recipe WHERE user_id = $1', [user_id], (error, result) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(result);
+			}
+		});
+	});
+};
+const getRecipeById = (recipe_id) => {
+	return new Promise((resolve, reject) => {
+		db.query('SELECT * FROM recipe WHERE recipe_id = $1', [recipe_id], (error, result) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(result);
+			}
+		});
+	});
+};
+
+module.exports = {
+	getAllData,
+	getDataPerPage,
+	insertDataRecipe,
+	getRecipeTrending,
+	getDataByName,
+	getDataWithComment,
+	getDataById,
+	updateDataRecipe,
+	deleteRecipe,
+	getRecipeByUserId,
+	getRecipeById,
+};

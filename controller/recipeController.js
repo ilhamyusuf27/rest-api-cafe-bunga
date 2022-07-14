@@ -36,24 +36,52 @@ const getDataWithComment = async (req, res) => {
 	}
 };
 
+const getRecipeByUserId = async (req, res) => {
+	try {
+		const { user_id } = req.body;
+		const getData = await model.getRecipeByUserId(user_id);
+		if (getData.rowCount > 0) {
+			res.send({ result: getData.rows });
+		} else {
+			res.status(404).send('Data not found!!!');
+		}
+	} catch (error) {
+		res.status(400).send('Program Error!!!');
+	}
+};
+
+const getRecipeById = async (req, res) => {
+	try {
+		const { recipe_id } = req.body;
+		const getData = await model.getRecipeById(recipe_id);
+		if (getData.rowCount > 0) {
+			res.send({ result: getData.rows });
+		} else {
+			res.status(404).send('Data not found!!!');
+		}
+	} catch (error) {
+		res.status(400).send('Program Error!!!');
+	}
+};
+
 const insertNewRecipe = async (req, res) => {
 	try {
 		const { user_id, title, ingredients, video_link } = req.body;
 		const recipe_images = req?.file?.path || 'images/default.jpg';
 		const getDataById = await userModel.getDataById(user_id);
 		if (getDataById.rowCount === 0) {
-			await unlinkAsync(req.file.path);
+			// await unlinkAsync(req.file.path);
 			res.status(404).send('User id not found');
 		} else {
 			if (ingredients.length > 255) {
-				await unlinkAsync(req.file.path);
+				// await unlinkAsync(req.file.path);
 				res.status(400).send('exceed the maximum capacity, ingredients must be less than 255 characters');
 			} else {
 				const data = await model.insertDataRecipe({ user_id, title, ingredients, recipe_images, video_link });
 				if (data) {
 					res.send('Data berhasil ditambah');
 				} else {
-					await unlinkAsync(req.file.path);
+					// await unlinkAsync(req.file.path);
 					res.status(400).send('Data failed to add');
 				}
 			}
@@ -85,12 +113,12 @@ const recipeTrending = async (req, res) => {
 const getDataByTitle = async (req, res) => {
 	try {
 		const { title } = req.body;
-		const tambah = `%${title}%`;
+		const tambah = `%${title.toLowerCase()}%`;
 		const getData = await model.getDataByName(tambah);
 		if (getData.rowCount > 0) {
 			res.send(getData.rows);
 		} else {
-			res.status(404).send('Data not found');
+			res.status(404).send('Resep tidak ditemukan');
 		}
 	} catch (error) {
 		console.log(error);
@@ -138,4 +166,4 @@ const deleteDataRecipe = async (req, res) => {
 	}
 };
 
-module.exports = { getAllDataRecipe, insertNewRecipe, recipeTrending, getDataByTitle, getDataWithComment, updateRecipe, deleteDataRecipe };
+module.exports = { getAllDataRecipe, insertNewRecipe, recipeTrending, getDataByTitle, getDataWithComment, updateRecipe, deleteDataRecipe, getRecipeByUserId, getRecipeById };

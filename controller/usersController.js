@@ -26,8 +26,9 @@ const getDataUsers = async (req, res) => {
 
 const getDataById = async (req, res) => {
 	try {
-		const { id } = req.body;
-		const data = await model.getDataById(id);
+		const user_id = req.params.id;
+		// console.log(user_id);
+		const data = await model.getDataById(user_id);
 		if (data.rowCount > 0) {
 			res.send({ result: data.rows });
 		} else {
@@ -44,8 +45,8 @@ const insertNewUser = async (req, res) => {
 		const photo_profil = req?.file?.path || 'images/users/default.jpg';
 		const passwordValidation = password === rePassword;
 		if (password.length < 8) {
-			await unlinkAsync(req.file.path);
-			res.send('Password length must be more than 8 character');
+			// await unlinkAsync(req.file.path);
+			res.status(401).send('Password length must be more than 8 character');
 		} else {
 			if (passwordValidation) {
 				const salt = bcrypt.genSaltSync(15);
@@ -57,16 +58,16 @@ const insertNewUser = async (req, res) => {
 					result: getDataByEmail.rows[0],
 				});
 			} else {
-				await unlinkAsync(req.file.path);
+				// await unlinkAsync(req.file.path);
 				res.status(401).send('Password invalid');
 			}
 		}
 	} catch (error) {
 		if (error.constraint === 'uc_email') {
-			await unlinkAsync(req.file.path);
+			// await unlinkAsync(req.file.path);
 			res.status(401).send('Email already exist');
 		} else {
-			await unlinkAsync(req.file.path);
+			// await unlinkAsync(req.file.path);
 			res.send('error');
 		}
 	}
@@ -98,6 +99,29 @@ const updateUser = async (req, res) => {
 	}
 };
 
+const updateImageUser = async (req, res) => {
+	try {
+		const { user_id } = req.body;
+		const photo_profil = req?.file?.path;
+
+		const checkData = await model.getDataById(user_id);
+		if (checkData.rowCount > 0) {
+			let inputPhoto = photo_profil || checkData.rows[0]?.photo_profil;
+			const updateData = await model.updateImageUser({ photo_profil: inputPhoto, user_id });
+			if (updateData) {
+				res.send('Data berhasil diubah');
+			} else {
+				res.status(400).send('Data failed to change');
+			}
+		} else {
+			res.status(404).send('Data not found');
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(400).send('Program error!');
+	}
+};
+
 const deleteUser = async (req, res) => {
 	try {
 		const { user_id } = req.body;
@@ -114,4 +138,4 @@ const deleteUser = async (req, res) => {
 	}
 };
 
-module.exports = { getDataUsers, getDataById, updateUser, deleteUser, insertNewUser };
+module.exports = { getDataUsers, getDataById, updateUser, deleteUser, insertNewUser, updateImageUser };
