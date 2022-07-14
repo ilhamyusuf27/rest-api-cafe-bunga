@@ -1,7 +1,7 @@
 const { Pool, Client } = require('pg');
 require('dotenv').config();
 
-// console.log(process.env.ENV_MODE === 'prod');
+console.log(process.env.DB_URI);
 
 let connection;
 
