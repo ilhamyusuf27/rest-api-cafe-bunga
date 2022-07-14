@@ -8,7 +8,9 @@ let connection;
 if (process.env.ENV_MODE === 'prod') {
 	connection = new Pool({
 		connectionString: process.env.DATABASE_URL,
-		ssl: true,
+		ssl: {
+			rejectUnauthorized: false,
+		},
 	});
 } else {
 	connection = new Pool({
