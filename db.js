@@ -7,7 +7,7 @@ let connection;
 
 if (process.env.ENV_MODE === 'prod') {
 	connection = new Client({
-		connectionString: process.env.DB_URI,
+		connectionString: process.env.DATABASE_URL,
 		ssl: {
 			rejectUnauthorized: false,
 		},
