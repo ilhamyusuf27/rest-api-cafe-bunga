@@ -13,7 +13,7 @@ if (process.env.ENV_MODE === 'prod') {
 		},
 	});
 } else {
-	connection = new Pool({
+	connection = new Client({
 		user: process.env.DB_USER,
 		host: process.env.DB_HOST,
 		database: process.env.DB_NAME,
@@ -22,4 +22,8 @@ if (process.env.ENV_MODE === 'prod') {
 	});
 }
 
+connection.connect((err) => {
+	if (err) throw err;
+	console.log('connected');
+});
 module.exports = connection;

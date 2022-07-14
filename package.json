@@ -18,7 +18,6 @@
   "description": "Tugas REST API",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "standard && node my-tests.js",
     "start": "node index.js"
