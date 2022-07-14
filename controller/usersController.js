@@ -44,6 +44,7 @@ const insertNewUser = async (req, res) => {
 		const { name, phone_number, email, password, rePassword } = req.body;
 		const photo_profil = req?.file?.path || 'images/users/default.jpg';
 		const passwordValidation = password === rePassword;
+		console.log(req.body);
 		if (password.length < 8) {
 			// await unlinkAsync(req.file.path);
 			res.status(401).send('Password length must be more than 8 character');
@@ -68,6 +69,7 @@ const insertNewUser = async (req, res) => {
 			res.status(401).send('Email already exist');
 		} else {
 			// await unlinkAsync(req.file.path);
+			console.log(error);
 			res.send('error');
 		}
 	}
