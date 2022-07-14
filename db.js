@@ -6,11 +6,9 @@ console.log(process.env.DB_URI);
 let connection;
 
 if (process.env.ENV_MODE === 'prod') {
-	connection = new Client({
+	connection = new Pool({
 		connectionString: process.env.DATABASE_URL,
-		ssl: {
-			rejectUnauthorized: false,
-		},
+		ssl: true,
 	});
 } else {
 	connection = new Pool({
