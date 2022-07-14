@@ -3,7 +3,7 @@ require('dotenv').config();
 
 let connection;
 
-if ((process.env.ENV_MODE = 'prod')) {
+if (process.env.ENV_MODE === 'prod') {
 	connection = new Client({
 		connectionString: process.env.DB_URI,
 		ssl: {
