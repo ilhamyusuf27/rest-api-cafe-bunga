@@ -85,7 +85,7 @@ const insertNewRecipe = async (req, res) => {
 		}
 	} catch (error) {
 		console.log(error);
-		res.status(400).send('Program error!!!');
+		res.status(400).send(error.message);
 	}
 };
 
