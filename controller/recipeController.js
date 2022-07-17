@@ -1,5 +1,6 @@
 const model = require('../model/recipeModel');
 const userModel = require('../model/usersModel');
+const cloudinary = require('../middleware/cloudinary')
 
 const getAllDataRecipe = async (req, res) => {
 	try {
@@ -61,7 +62,9 @@ const getRecipeById = async (req, res) => {
 const insertNewRecipe = async (req, res) => {
 	try {
 		const { user_id, title, ingredients, video_link } = req.body;
-		const recipe_images = req?.file?.path || 'images/default.jpg';
+		const uploadImage = await cloudinary.uploader.upload(req.file.path, { folder: 'recipe'})
+		// console.log(uploadImage)
+		const recipe_images = uploadImage.secure_url;
 		const getDataById = await userModel.getDataById(user_id);
 		if (getDataById.rowCount === 0) {
 			// await unlinkAsync(req.file.path);
