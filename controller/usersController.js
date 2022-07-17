@@ -1,9 +1,9 @@
 const model = require('../model/usersModel');
 const bcrypt = require('bcrypt');
-const fs = require('fs');
-const { promisify } = require('util');
+// const fs = require('fs');
+// const { promisify } = require('util');
 
-const unlinkAsync = promisify(fs.unlink);
+// const unlinkAsync = promisify(fs.unlink);
 
 // const Cryptojs = require('crypto-js');
 // const { mode } = require('crypto-js');
@@ -20,6 +20,7 @@ const getDataUsers = async (req, res) => {
 			res.status(404).send('Data not found');
 		}
 	} catch (error) {
+		// console.log(error)
 		res.status(400).send('Program error!');
 	}
 };
@@ -129,7 +130,7 @@ const deleteUser = async (req, res) => {
 		const { user_id } = req.body;
 		const getData = await model.getDataById(user_id);
 		if (getData.rowCount > 0) {
-			const deleteData = await model.deleteDataUser(user_id);
+			await model.deleteDataUser(user_id);
 			res.send(`User id:${user_id} berhasil dihapus`);
 		} else {
 			res.status(400).send('Data failed to delete');

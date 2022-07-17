@@ -1,11 +1,5 @@
-const e = require('express');
 const model = require('../model/recipeModel');
 const userModel = require('../model/usersModel');
-
-const fs = require('fs');
-const { promisify } = require('util');
-
-const unlinkAsync = promisify(fs.unlink);
 
 const getAllDataRecipe = async (req, res) => {
 	try {
@@ -88,7 +82,6 @@ const insertNewRecipe = async (req, res) => {
 		}
 	} catch (error) {
 		console.log(error);
-		await unlinkAsync(req.file.path);
 		res.status(400).send('Program error!!!');
 	}
 };
@@ -156,7 +149,7 @@ const deleteDataRecipe = async (req, res) => {
 		const { recipe_id } = req.body;
 		const getData = await model.getDataById(recipe_id);
 		if (getData.rowCount > 0) {
-			const deleteData = await model.deleteRecipe(recipe_id);
+			await model.deleteRecipe(recipe_id);
 			res.send(`Recipe: ${getData.rows[0].title} berhasil dihapus`);
 		} else {
 			res.status(400).send('Recipe failed to delete');

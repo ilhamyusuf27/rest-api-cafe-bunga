@@ -55,7 +55,7 @@ const deleteComment = async (req, res) => {
 		const { comment_id } = req.body;
 		const getData = await model.getCommentById(comment_id);
 		if (getData.rowCount > 0) {
-			const deleteData = await model.deleteComment(comment_id);
+			await model.deleteComment(comment_id);
 			res.send(`Comment deleted successfully`);
 		} else {
 			res.status(400).send('Comment failed to delete');
