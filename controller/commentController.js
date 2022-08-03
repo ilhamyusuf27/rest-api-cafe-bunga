@@ -34,7 +34,7 @@ const updateComment = async (req, res) => {
 		const { comment_id, comment } = req.body;
 		const checkData = await model.getCommentById(comment_id);
 		if (checkData.rowCount > 0) {
-			let inputComment = content || checkData.rows[0]?.comment;
+			let inputComment = comment || checkData.rows[0]?.comment;
 			const updateData = await model.updateComment(inputComment, comment_id);
 			if (updateData) {
 				res.send("Data has been change successfully");
@@ -69,7 +69,6 @@ const getDataByRecipeId = async (req, res) => {
 		const { id } = req.params;
 		const getData = await model.getCommentByRecipeId(id);
 		if (getData.rowCount > 0) {
-			console.log(getData);
 			res.send({
 				totalData: getData.rowCount,
 				result: getData.rows,
