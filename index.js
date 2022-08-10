@@ -10,6 +10,8 @@ const users = require("./routes/usersRoutes");
 const recipes = require("./routes/recipeRoutes");
 const comments = require("./routes/commentRoutes");
 const login = require("./routes/loginRoutes");
+const save = require("./routes/saveRoutes");
+const like = require("./routes/likeRoutes");
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
 
@@ -24,6 +26,8 @@ app.use("/", users);
 app.use("/", recipes);
 app.use("/", comments);
 app.use("/", login);
+app.use("/", save);
+app.use("/", like);
 
 app.use("*", (req, res) => {
 	res.send("sukses");

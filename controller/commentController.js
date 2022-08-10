@@ -19,7 +19,8 @@ const insertComment = async (req, res) => {
 		const recipe_id = req.params.id;
 		const insertData = await model.insertDataComment({ recipe_id, comment, user_id });
 		if (insertData) {
-			res.send("Data added successfully");
+			const getData = await model.getCommentByRecipeId(recipe_id);
+			res.send({ message: "Data added successfully", result: getData.rows });
 		} else {
 			res.status("400").send("Data failed to change");
 		}
@@ -74,7 +75,7 @@ const getDataByRecipeId = async (req, res) => {
 				result: getData.rows,
 			});
 		} else {
-			res.status(404).send("Comment failed to delete");
+			res.status(404).send("Comment not found");
 		}
 	} catch (error) {
 		res.status(400).send("Program error!!!");
