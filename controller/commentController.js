@@ -75,7 +75,7 @@ const getDataByRecipeId = async (req, res) => {
 				result: getData.rows,
 			});
 		} else {
-			res.status(404).send("Comment not found");
+			res.status(404).send({ message: "Comment not found" });
 		}
 	} catch (error) {
 		res.status(400).send("Program error!!!");
