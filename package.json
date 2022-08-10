@@ -1,15 +1,36 @@
 {
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "body-parse": "^0.1.0",
     "body-parser": "^1.20.0",
+    "cloudinary": "^1.30.0",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "helmet": "^5.1.0",
+    "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^2.0.18",
     "pg": "^8.7.3",
     "standard": "^17.0.0"
-  }
+  },
+  "name": "rest-api-cafe-bunga",
+  "description": "Tugas REST API",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && node my-tests.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilhamyusuf27/rest-api-cafe-bunga.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ilhamyusuf27/rest-api-cafe-bunga/issues"
+  },
+  "homepage": "https://github.com/ilhamyusuf27/rest-api-cafe-bunga#readme"
 }

@@ -10,8 +10,6 @@ const fileStorage = multer.diskStorage({
 	},
 });
 
-const upload = multer({ storage: fileStorage });
-
 const uploadDetail = multer({
 	storage: fileStorage,
 	fileFilter: (req, file, cb) => {
@@ -25,14 +23,18 @@ const uploadDetail = multer({
 });
 
 const uploadMidleware = (req, res, next) => {
-	const uploadSingle = uploadDetail.single('photo_profil');
-	uploadSingle(req, res, (err) => {
-		if (err) {
-			return res.status(400).send(err.message);
-		} else {
-			next();
-		}
-	});
+	try {
+		const uploadSingle = uploadDetail.single('photo_profil');
+		uploadSingle(req, res, (err) => {
+			if (err) {
+				return res.status(400).send(err.message);
+			} else {
+				next();
+			}
+		});
+	} catch (error) {
+		res.send(error.message);
+	}
 };
 
 module.exports = uploadMidleware;

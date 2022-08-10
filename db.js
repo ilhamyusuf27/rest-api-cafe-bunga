@@ -1,12 +1,29 @@
-const Postgre = require('pg').Pool;
+const { Pool, Client } = require('pg');
 require('dotenv').config();
 
-const connection = new Postgre({
-	user: process.env.DB_USER,
-	host: process.env.DB_HOST,
-	database: process.env.DB_NAME,
-	password: process.env.DB_PASS,
-	port: process.env.DB_PORT,
-});
+// console.log(process.env.DB_URI);
 
+let connection;
+
+if (process.env.ENV_MODE === 'prod') {
+	connection = new Client({
+		connectionString: process.env.DATABASE_URL,
+		ssl: {
+			rejectUnauthorized: false,
+		},
+	});
+} else {
+	connection = new Client({
+		user: process.env.DB_USER,
+		host: process.env.DB_HOST,
+		database: process.env.DB_NAME,
+		password: process.env.DB_PASS,
+		port: process.env.DB_PORT,
+	});
+}
+
+connection.connect((err) => {
+	if (err) throw err;
+	console.log('connected');
+});
 module.exports = connection;
