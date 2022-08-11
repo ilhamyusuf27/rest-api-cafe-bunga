@@ -34,7 +34,11 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 // 	preflightContinue: false,
 // 	optionsSuccessStatus: 204,
 // };
-app.use(cors());
+app.use(
+	cors({
+		origin: true,
+	})
+);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
