@@ -38,11 +38,23 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(
-	cors({
-		origins: "localhost:3000",
-	})
-);
+// app.use(
+// 	cors({
+// 		origins: "localhost:3000",
+// 	})
+// );
+
+const allowlist = ["http://localhost:3000/", "https://localhost:3000/"];
+const corsOptionsDelegate = function (req, callback) {
+	let corsOptions;
+	if (allowlist.indexOf(req.header("Origin")) !== -1) {
+		corsOptions = { origin: true };
+	} else {
+		corsOptions = { origin: false };
+	}
+	callback(null, corsOptions);
+};
+app.use(cors(corsOptionsDelegate));
 
 app.use("/images/recipes", express.static("images/recipes"));
 app.use("/images/user", express.static("images/users"));
