@@ -34,14 +34,15 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 // 	preflightContinue: false,
 // 	optionsSuccessStatus: 204,
 // };
-app.use(
-	cors({
-		origins: "http://localhost:3000",
-	})
-);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(
+	cors({
+		origins: "localhost:3000",
+	})
+);
 
 app.use("/images/recipes", express.static("images/recipes"));
 app.use("/images/user", express.static("images/users"));
