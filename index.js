@@ -15,7 +15,7 @@ const like = require("./routes/likeRoutes");
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
 
-app.use(cors({ origins: "http://localhost:3000/" }));
+app.use(cors({ origins: "http://localhost:3000" }));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
