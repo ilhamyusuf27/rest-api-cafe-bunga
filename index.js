@@ -15,31 +15,32 @@ const like = require("./routes/likeRoutes");
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
 
-const whitelist = ["http://localhost:3000"];
+// const whitelist = ["http://localhost:3000"];
 
-const corsOption = function (req, callback) {
-	let corsOptions;
-	if (whitelist.indexOf(req.header("Origin")) !== -1) {
-		corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
-	} else {
-		corsOptions = { origin: false }; // disable CORS for this request
-	}
-	callback(null, corsOptions); // callback expects two parameters: error and options
-};
+// const corsOption = function (req, callback) {
+// 	let corsOptions;
+// 	if (whitelist.indexOf(req.header("Origin")) !== -1) {
+// 		corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
+// 	} else {
+// 		corsOptions = { origin: false }; // disable CORS for this request
+// 	}
+// 	callback(null, corsOptions); // callback expects two parameters: error and options
+// };
 
 // app.use(cors({ origins: "http://localhost:3000" }));
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/images/recipes", express.static("images/recipes"));
 app.use("/images/user", express.static("images/users"));
-app.use("/", cors(corsOption), users);
-app.use("/", cors(corsOption), recipes);
-app.use("/", cors(corsOption), comments);
-app.use("/", cors(corsOption), login);
-app.use("/", cors(corsOption), save);
-app.use("/", cors(corsOption), like);
+app.use("/", users);
+app.use("/", recipes);
+app.use("/", comments);
+app.use("/", login);
+app.use("/", save);
+app.use("/", like);
 
 app.use("*", (req, res) => {
 	res.send("sukses");
