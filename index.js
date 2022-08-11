@@ -28,13 +28,13 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 // };
 
 // app.use(cors({ origins: "http://localhost:3000" }));
-const options = {
-	origin: "http://localhost:3000",
-	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-	preflightContinue: false,
-	optionsSuccessStatus: 204,
-};
-app.use(cors(options));
+// const options = {
+// 	origin: "http://localhost:3000",
+// 	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+// 	preflightContinue: false,
+// 	optionsSuccessStatus: 204,
+// };
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
