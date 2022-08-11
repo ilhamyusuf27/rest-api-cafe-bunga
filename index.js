@@ -36,7 +36,7 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 // };
 app.use(
 	cors({
-		origin: true,
+		origin: "http://localhost:3000",
 	})
 );
 
