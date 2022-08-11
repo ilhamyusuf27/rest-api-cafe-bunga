@@ -17,14 +17,14 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 
 const whitelist = ["http://localhost:3000"];
 
-const corsOption = {
-	origin: function (origin, callback) {
-		if (whitelist.indexOf(origin) !== -1) {
-			callback(null, true);
-		} else {
-			callback(new Error("Not allowaned by CORS"));
-		}
-	},
+const corsOption = function (req, callback) {
+	let corsOptions;
+	if (whitelist.indexOf(req.header("Origin")) !== -1) {
+		corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
+	} else {
+		corsOptions = { origin: false }; // disable CORS for this request
+	}
+	callback(null, corsOptions); // callback expects two parameters: error and options
 };
 
 // app.use(cors({ origins: "http://localhost:3000" }));
