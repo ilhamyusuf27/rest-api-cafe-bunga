@@ -2,7 +2,7 @@ const db = require("../db");
 
 const getAllData = () => {
 	return new Promise((resolve, reject) => {
-		db.query("SELECT * FROM recipe ORDER BY recipe_id DESC", (error, result) => {
+		db.query("SELECT recipe.*, users.name AS author FROM recipe LEFT JOIN users ON recipe.user_id = users.user_id ORDER BY recipe_id DESC", (error, result) => {
 			if (error) {
 				reject(error);
 			} else {
