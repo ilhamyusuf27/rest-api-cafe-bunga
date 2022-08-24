@@ -149,7 +149,7 @@ const deleteRecipe = (recipe_id) => {
 
 const getRecipeByUserId = (user_id) => {
 	return new Promise((resolve, reject) => {
-		db.query("SELECT recipe.*, users.name AS author FROM recipe LEFT JOIN users ON recipe.user_id = users.user_id WHERE user_id = $1 ORDER BY recipe_id DESC", [user_id], (error, result) => {
+		db.query("SELECT recipe.*, users.name AS author FROM recipe LEFT JOIN users ON recipe.user_id = users.user_id WHERE recipe.user_id = $1 ORDER BY recipe_id DESC", [user_id], (error, result) => {
 			if (error) {
 				reject(error);
 			} else {
