@@ -196,7 +196,7 @@ const editSave = (user_id, recipe_id) => {
 
 const getDataBySave = (user_id) => {
 	return new Promise((resolve, reject) => {
-		db.query("SELECT * FROM recipe WHERE $1 = ANY(save);", [user_id], (error, result) => {
+		db.query("SELECT recipe.*, users.name AS author FROM recipe LEFT JOIN users ON recipe.user_id = users.user_id WHERE $1 = ANY(save);", [user_id], (error, result) => {
 			if (error) {
 				reject(error);
 			} else {
@@ -232,7 +232,7 @@ const editLike = (user_id, recipe_id) => {
 
 const getDataByLiked = (user_id) => {
 	return new Promise((resolve, reject) => {
-		db.query("SELECT * FROM recipe WHERE $1 = ANY(likes);", [user_id], (error, result) => {
+		db.query("SELECT recipe.*, users.name AS author FROM recipe LEFT JOIN users ON recipe.user_id = users.user_id WHERE $1 = ANY(likes) ORDER BY recipe_id DESC;", [user_id], (error, result) => {
 			if (error) {
 				reject(error);
 			} else {
