@@ -33,7 +33,7 @@ app.use("/", save);
 app.use("/", like);
 
 app.use("*", (req, res) => {
-	res.send("sukses");
+	res.send("test");
 });
 
 app.listen(port, () => {
