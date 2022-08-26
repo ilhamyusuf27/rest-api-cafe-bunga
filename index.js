@@ -15,34 +15,25 @@ const like = require("./routes/likeRoutes");
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
 
-const whitelist = ["http://localhost:3000"];
-
-const corsOption = {
-	origin: function (origin, callback) {
-		if (whitelist.indexOf(origin) !== -1) {
-			callback(null, true);
-		} else {
-			callback(new Error("Not allowaned by CORS"));
-		}
-	},
-};
-
-// app.use(cors({ origins: "http://localhost:3000" }));
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const corsOptions = {
+	origins: "http://localhost:3000/",
+};
+app.use(cors(corsOptions));
+
 app.use("/images/recipes", express.static("images/recipes"));
 app.use("/images/user", express.static("images/users"));
-app.use("/", cors(corsOption), users);
-app.use("/", cors(corsOption), recipes);
-app.use("/", cors(corsOption), comments);
-app.use("/", cors(corsOption), login);
-app.use("/", cors(corsOption), save);
-app.use("/", cors(corsOption), like);
+app.use("/", users);
+app.use("/", recipes);
+app.use("/", comments);
+app.use("/", login);
+app.use("/", save);
+app.use("/", like);
 
 app.use("*", (req, res) => {
-	res.send("sukses");
+	res.send("test");
 });
 
 app.listen(port, () => {

@@ -77,6 +77,8 @@ const getRecipeByIdParams = async (req, res) => {
 const insertNewRecipe = async (req, res) => {
 	try {
 		const { user_id, title, ingredients, video_link } = req.body;
+		// console.log(req.body);
+		// console.log(req.file.path);
 		const uploadImage = await cloudinary.uploader.upload(req.file.path, { folder: "recipe" });
 		// console.log(uploadImage)
 		const recipe_images = uploadImage.secure_url;
