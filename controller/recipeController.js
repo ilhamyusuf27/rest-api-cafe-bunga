@@ -139,7 +139,8 @@ const getDataByTitle = async (req, res) => {
 const updateRecipe = async (req, res) => {
 	try {
 		const { recipe_id, title, ingredients, video_link } = req.body;
-		const recipe_images = req?.file?.path;
+		const uploadImage = await cloudinary.uploader.upload(req.file.path, { folder: "recipe" });
+		const recipe_images = uploadImage.secure_url;
 
 		const checkData = await model.getDataById(recipe_id);
 		if (checkData.rowCount > 0) {
