@@ -163,10 +163,10 @@ const updateRecipe = async (req, res) => {
 
 const deleteDataRecipe = async (req, res) => {
 	try {
-		const { recipe_id } = req.params;
-		const getData = await model.getDataById(recipe_id);
+		const { id } = req.params;
+		const getData = await model.getDataById(id);
 		if (getData.rowCount > 0) {
-			await model.deleteRecipe(recipe_id);
+			await model.deleteRecipe(id);
 			res.status(200).json({ message: `Recipe: ${getData.rows[0].title} berhasil dihapus` });
 		} else {
 			res.status(400).json({ message: `Recipe failed to delete` });
