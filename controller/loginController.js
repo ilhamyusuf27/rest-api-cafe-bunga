@@ -8,13 +8,13 @@ const login = async (req, res) => {
 		const { email, password } = req.body;
 		const getDataByEmail = await userModel.getDataByEmail(email);
 		if (getDataByEmail.rowCount === 0) {
-			res.status(404).send("Wrong email!");
+			res.status(404).json({ message: "Wrong email!" });
 		} else {
 			const { user_id, name, email: email_user, photo_profil } = getDataByEmail.rows[0];
 			const checkPassword = bcrypt.compareSync(password, getDataByEmail.rows[0].password);
 			if (checkPassword) {
 				const accessToken = jwt.sign({ user_id, name, email_user }, process.env.SECRET_KEY, { expiresIn: "1d" });
-				res.send({
+				res.status(200).json({
 					message: "Login successfully",
 					token: accessToken,
 					data: {
@@ -25,11 +25,11 @@ const login = async (req, res) => {
 					},
 				});
 			} else {
-				res.status(400).send("Wrong password!");
+				res.status(403).json({ message: "Wrong password!" });
 			}
 		}
 	} catch (error) {
-		console.log(error);
+		res.status(400).json({ message: "Program error!!!" });
 	}
 };
 

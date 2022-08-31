@@ -5,18 +5,18 @@ const saveRecipe = async (req, res) => {
 		const { recipe_id, user_id } = req.body;
 		const getDataRecipe = await model.getDataPerPageWithoutPage(recipe_id);
 		if (!getDataRecipe.rowCount) {
-			return res.status(404).send("Data not found");
+			return res.status(404).json({ message: "Data recipe not found!!!" });
 		}
 		const likedData = getDataRecipe?.rows[0]?.save;
 
 		if (!likedData) {
 			await model.saveIsEmpty(user_id, recipe_id);
 			const getData = await model.getAllData();
-			return res.send({ message: "Data berhasil di simpan", result: getData.rows });
+			return res.json({ message: "Data berhasil di simpan", result: getData.rows });
 		}
 
 		if (likedData.includes(user_id)) {
-			return res.status(400).send({ message: "Data sudah tersimpan" });
+			return res.status(400).json({ message: "Data sudah tersimpan" });
 		}
 
 		if (likedData) {
@@ -26,11 +26,10 @@ const saveRecipe = async (req, res) => {
 			const joinSave = `{${updateSave.join(",")}}`;
 			await model.editSave(joinSave, recipe_id);
 			const getData = await model.getAllData();
-			return res.status(200).send({ message: "Data berhasil di simpan", result: getData.rows });
+			return res.status(200).json({ message: "Data berhasil di simpan", result: getData.rows });
 		}
 	} catch (error) {
-		console.log(error);
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
 
@@ -39,7 +38,7 @@ const unSaveRecipe = async (req, res) => {
 		const { recipe_id, user_id } = req.body;
 		const getDataRecipe = await model.getDataPerPageWithoutPage(recipe_id);
 		if (!getDataRecipe.rowCount) {
-			return res.status(404).send("Data not found");
+			return res.status(404).json({ message: "Data recipe not found" });
 		}
 		const likedData = getDataRecipe?.rows[0]?.save;
 
@@ -48,12 +47,12 @@ const unSaveRecipe = async (req, res) => {
 			const joinSave = `{${unSave.join(",")}}`;
 			await model.editSave(joinSave, recipe_id);
 			const getData = await model.getAllData();
-			return res.status(200).send({ message: "Recipe sudah tidak tersimpan", result: getData.rows });
+			return res.status(200).json({ message: "Recipe sudah tidak tersimpan", result: getData.rows });
 		} else {
-			return res.status(400).send("Data tidak ditemukan");
+			return res.status(400).json({ message: "Data tidak ditemukan" });
 		}
 	} catch (error) {
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
 
@@ -62,18 +61,18 @@ const saveRecipeDetail = async (req, res) => {
 		const { recipe_id, user_id } = req.body;
 		const getDataRecipe = await model.getDataPerPageWithoutPage(recipe_id);
 		if (!getDataRecipe.rowCount) {
-			return res.status(404).send("Data not found");
+			return res.status(404).json({ message: "Data recipe not found" });
 		}
 		const likedData = getDataRecipe?.rows[0]?.save;
 
 		if (!likedData) {
 			await model.saveIsEmpty(user_id, recipe_id);
 			const getData = await model.getAllData();
-			return res.send({ message: "Data berhasil di simpan", result: getData.rows });
+			return res.json({ message: "Data berhasil di simpan", result: getData.rows });
 		}
 
 		if (likedData.includes(user_id)) {
-			return res.status(400).send({ message: "Data sudah tersimpan" });
+			return res.status(400).json({ message: "Data sudah tersimpan" });
 		}
 
 		if (likedData) {
@@ -83,11 +82,11 @@ const saveRecipeDetail = async (req, res) => {
 			const joinSave = `{${updateSave.join(",")}}`;
 			await model.editSave(joinSave, recipe_id);
 			const getData = await model.getDataPerPageWithoutPage(recipe_id.toString());
-			return res.status(200).send({ message: "Data berhasil di simpan", result: getData.rows });
+			return res.status(200).json({ message: "Data berhasil di simpan", result: getData.rows });
 		}
 	} catch (error) {
 		console.log(error);
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
 
@@ -96,7 +95,7 @@ const unSaveRecipeDetail = async (req, res) => {
 		const { recipe_id, user_id } = req.body;
 		const getDataRecipe = await model.getDataById(recipe_id);
 		if (!getDataRecipe.rowCount) {
-			return res.status(404).send("Data not found");
+			return res.status(404).json({ message: "Data recipe not found" });
 		}
 		const likedData = getDataRecipe?.rows[0]?.save;
 
@@ -105,12 +104,12 @@ const unSaveRecipeDetail = async (req, res) => {
 			const joinSave = `{${unSave.join(",")}}`;
 			await model.editSave(joinSave, recipe_id);
 			const getData = await model.getDataById(recipe_id.toString());
-			return res.status(200).send({ message: "Recipe sudah tidak tersimpan", result: getData.rows });
+			return res.status(200).json({ message: "Recipe sudah tidak tersimpan", result: getData.rows });
 		} else {
-			return res.status(400).send("Data tidak ditemukan");
+			return res.status(400).json({ message: `Like dari user-id ${user_id} tidak ditemukan di recipe-id ${recipe_id}` });
 		}
 	} catch (error) {
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
 
@@ -119,12 +118,12 @@ const getDataSave = async (req, res) => {
 		const { id } = req.params;
 		const getData = await model.getDataBySave(id.toString());
 		if (getData.rowCount > 0) {
-			res.send({ total_data: getData.rowCount, result: getData.rows });
+			res.status(200).json({ total_data: getData.rowCount, result: getData.rows });
 		} else {
-			res.status(404).send("Data not found!!!!");
+			res.status(404).json({ message: "Data saves not found!!!!" });
 		}
 	} catch (error) {
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
 

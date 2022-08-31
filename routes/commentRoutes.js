@@ -4,7 +4,7 @@ const { authenticationToken } = require("../middleware/authenticate");
 
 Router.get("/all-comments", controller.showAllComment);
 Router.get("/get-comment/:id", controller.getDataByRecipeId);
-Router.post("/recipe/:id/comment", authenticationToken, controller.insertComment);
+Router.post("/recipe/comments/:id", authenticationToken, controller.insertComment);
 Router.patch("/recipe/comment/edit", authenticationToken, controller.updateComment);
 Router.delete("/recipe/comment/delete", authenticationToken, controller.deleteComment);
 

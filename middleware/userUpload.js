@@ -1,22 +1,22 @@
-const multer = require('multer');
+const multer = require("multer");
 const maxSize = 1 * 1000 * 1000;
 
 const fileStorage = multer.diskStorage({
 	destination: (req, file, cb) => {
-		cb(null, './images/users/');
+		cb(null, "./images/users/");
 	},
 	filename: (req, file, cb) => {
-		cb(null, new Date().getTime() + '-' + file.originalname);
+		cb(null, new Date().getTime() + "-" + file.originalname);
 	},
 });
 
 const uploadDetail = multer({
 	storage: fileStorage,
 	fileFilter: (req, file, cb) => {
-		if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+		if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
 			cb(null, true);
 		} else {
-			cb(new Error('Only .png, .jpg, .jpeg format allowed'), false);
+			cb(new Error("Only .png, .jpg, .jpeg format allowed"), false);
 		}
 	},
 	limits: { fileSize: maxSize },
@@ -24,16 +24,19 @@ const uploadDetail = multer({
 
 const uploadMidleware = (req, res, next) => {
 	try {
-		const uploadSingle = uploadDetail.single('photo_profil');
+		const uploadSingle = uploadDetail.single("photo_profil");
 		uploadSingle(req, res, (err) => {
 			if (err) {
-				return res.status(400).send(err.message);
+				if (err.code === "LIMIT_FILE_SIZE") {
+					return res.status(400).json({ message: "File too large, maximum 1mb" });
+				}
+				return res.status(400).json({ message: err.message });
 			} else {
 				next();
 			}
 		});
 	} catch (error) {
-		res.send(error.message);
+		res.status(400).json({ message: error.message });
 	}
 };
 
