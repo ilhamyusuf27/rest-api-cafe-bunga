@@ -1,11 +1,10 @@
-const { Pool, Client } = require('pg');
-require('dotenv').config();
+const { Pool, Client } = require("pg");
 
-// console.log(process.env.DB_URI);
+require("dotenv").config();
 
 let connection;
 
-if (process.env.ENV_MODE === 'prod') {
+if (process.env.ENV_MODE === "prod") {
 	connection = new Client({
 		connectionString: process.env.DATABASE_URL,
 		ssl: {
@@ -13,7 +12,7 @@ if (process.env.ENV_MODE === 'prod') {
 		},
 	});
 } else {
-	connection = new Client({
+	connection = new Pool({
 		user: process.env.DB_USER,
 		host: process.env.DB_HOST,
 		database: process.env.DB_NAME,
@@ -24,6 +23,6 @@ if (process.env.ENV_MODE === 'prod') {
 
 connection.connect((err) => {
 	if (err) throw err;
-	console.log('connected');
+	console.log("connected");
 });
 module.exports = connection;
