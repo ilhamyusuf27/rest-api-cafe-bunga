@@ -14,6 +14,6 @@ Router.get("/recipe/trending", controller.recipeTrending);
 Router.get("/recipes/find/:title", controller.getDataByTitle);
 Router.get("/recipes/comments", controller.getDataWithComment);
 Router.patch("/recipes/edit", authenticationToken, recipeUpload, controller.updateRecipe);
-Router.delete("/recipes/delete", authenticationToken, controller.deleteDataRecipe);
+Router.delete("/delete/recipe/:id", authenticationToken, controller.deleteDataRecipe);
 
 module.exports = Router;

@@ -4,12 +4,12 @@ const showAllComment = async (req, res) => {
 	try {
 		const getData = await model.getAllData();
 		if (getData.rowCount > 0) {
-			res.send(getData.rows);
+			res.status(200).json({ data: getData.rows });
 		} else {
-			res.status(404).send("Data not found");
+			res.status(404).json({ message: "Data not found" });
 		}
 	} catch (error) {
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program error!!!" });
 	}
 };
 
@@ -20,12 +20,11 @@ const insertComment = async (req, res) => {
 		const insertData = await model.insertDataComment({ recipe_id, comment, user_id });
 		if (insertData) {
 			const getData = await model.getCommentByRecipeId(recipe_id);
-			res.send({ message: "Data added successfully", result: getData.rows });
+			res.status(200).json({ message: "Comment added successfully", result: getData.rows });
 		} else {
-			res.status("400").send("Data failed to change");
+			res.status(400).json({ message: "Comment failed" });
 		}
 	} catch (error) {
-		console.log(error);
 		res.status(400).send("Program error!!!");
 	}
 };
@@ -38,15 +37,15 @@ const updateComment = async (req, res) => {
 			let inputComment = comment || checkData.rows[0]?.comment;
 			const updateData = await model.updateComment(inputComment, comment_id);
 			if (updateData) {
-				res.send("Data has been change successfully");
+				res.status(200).json({ message: "Comment has been change successfully" });
 			} else {
-				res.status(400).send("Data failed to change");
+				res.status(400).json({ message: "Comment failed to change" });
 			}
 		} else {
-			res.status(404).send("Data not found");
+			res.status(404).json({ message: "Comment not found" });
 		}
 	} catch (error) {
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program error!!!" });
 	}
 };
 
@@ -56,12 +55,12 @@ const deleteComment = async (req, res) => {
 		const getData = await model.getCommentById(comment_id);
 		if (getData.rowCount > 0) {
 			await model.deleteComment(comment_id);
-			res.send(`Comment deleted successfully`);
+			res.status(200).json({ message: `Comment deleted successfully` });
 		} else {
-			res.status(400).send("Comment failed to delete");
+			res.status(400).json({ message: "Comment failed to delete" });
 		}
 	} catch (error) {
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program error!!!" });
 	}
 };
 
@@ -70,15 +69,15 @@ const getDataByRecipeId = async (req, res) => {
 		const { id } = req.params;
 		const getData = await model.getCommentByRecipeId(id);
 		if (getData.rowCount > 0) {
-			res.send({
+			res.status(200).json({
 				totalData: getData.rowCount,
 				result: getData.rows,
 			});
 		} else {
-			res.status(404).send({ message: "Comment not found" });
+			res.status(404).json({ message: "Comment not found" });
 		}
 	} catch (error) {
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program error!!!" });
 	}
 };
 

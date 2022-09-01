@@ -5,18 +5,18 @@ const likedRecipe = async (req, res) => {
 		const { recipe_id, user_id } = req.body;
 		const getDataRecipe = await model.getDataPerPageWithoutPage(recipe_id);
 		if (!getDataRecipe.rowCount) {
-			return res.status(404).send("Data not found");
+			return res.status(404).json({ message: "Likes not found" });
 		}
 		const likedData = getDataRecipe?.rows[0]?.likes;
 
 		if (!likedData) {
 			await model.likeIsEmpty(user_id, recipe_id);
 			const getData = await model.getAllData();
-			return res.send({ message: "Data berhasil di sukai", result: getData.rows });
+			return res.status(200).json({ message: "Data berhasil di sukai", result: getData.rows });
 		}
 
 		if (likedData.includes(user_id)) {
-			return res.status(400).send({ message: "Data sudah disukai" });
+			return res.status(400).json({ message: "Data sudah disukai" });
 		}
 
 		if (likedData) {
@@ -25,11 +25,10 @@ const likedRecipe = async (req, res) => {
 			const joinSave = `{${updateSave.join(",")}}`;
 			await model.editLike(joinSave, recipe_id);
 			const getData = await model.getAllData();
-			return res.status(200).send({ message: "Data berhasil di sukai", result: getData.rows });
+			return res.status(200).json({ message: "Data berhasil di sukai", result: getData.rows });
 		}
 	} catch (error) {
-		console.log(error);
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program error!!!" });
 	}
 };
 
@@ -38,7 +37,7 @@ const unLikedRecipe = async (req, res) => {
 		const { recipe_id, user_id } = req.body;
 		const getDataRecipe = await model.getDataPerPageWithoutPage(recipe_id);
 		if (!getDataRecipe.rowCount) {
-			return res.status(404).send("Data not found");
+			return res.status(404).json({ message: "Recipes not found" });
 		}
 		const likedData = getDataRecipe?.rows[0]?.likes;
 
@@ -47,12 +46,12 @@ const unLikedRecipe = async (req, res) => {
 			const joinSave = `{${unSave.join(",")}}`;
 			await model.editLike(joinSave, recipe_id);
 			const getData = await model.getAllData();
-			return res.status(200).send({ message: "Recipe sudah tidak disukai", result: getData.rows });
+			return res.status(200).json({ message: "Recipe sudah tidak disukai", result: getData.rows });
 		} else {
-			return res.status(400).send("Data tidak ditemukan");
+			return res.status(404).json({ message: "Data like tidak ditemukan" });
 		}
 	} catch (error) {
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program error!!!" });
 	}
 };
 
@@ -61,18 +60,18 @@ const likedRecipeDetail = async (req, res) => {
 		const { recipe_id, user_id } = req.body;
 		const getDataRecipe = await model.getDataPerPageWithoutPage(recipe_id);
 		if (!getDataRecipe.rowCount) {
-			return res.status(404).send("Data not found");
+			return res.status(404).json({ message: "Recipes not found" });
 		}
 		const likedData = getDataRecipe?.rows[0]?.likes;
 
 		if (!likedData) {
 			await model.likeIsEmpty(user_id, recipe_id);
 			const getData = await model.getAllData();
-			return res.send({ message: "Data berhasil di sukai", result: getData.rows });
+			return res.status(200).json({ message: "Data berhasil di sukai", result: getData.rows });
 		}
 
 		if (likedData.includes(user_id)) {
-			return res.status(400).send({ message: "Data sudah disukai" });
+			return res.status(400).json({ message: "Data sudah disukai" });
 		}
 
 		if (likedData) {
@@ -81,11 +80,10 @@ const likedRecipeDetail = async (req, res) => {
 			const joinSave = `{${updateSave.join(",")}}`;
 			await model.editLike(joinSave, recipe_id);
 			const getData = await model.getDataById(recipe_id.toString());
-			return res.status(200).send({ message: "Data berhasil di sukai", result: getData.rows });
+			return res.status(200).json({ message: "Data berhasil di sukai", result: getData.rows });
 		}
 	} catch (error) {
-		console.log(error);
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program error!!!" });
 	}
 };
 
@@ -94,7 +92,7 @@ const unLikedRecipeDetail = async (req, res) => {
 		const { recipe_id, user_id } = req.body;
 		const getDataRecipe = await model.getDataPerPageWithoutPage(recipe_id);
 		if (!getDataRecipe.rowCount) {
-			return res.status(404).send("Data not found");
+			return res.status(404).json({ message: "Recipes not found" });
 		}
 		const likedData = getDataRecipe?.rows[0]?.likes;
 
@@ -105,10 +103,10 @@ const unLikedRecipeDetail = async (req, res) => {
 			const getData = await model.getDataById(recipe_id.toString());
 			return res.status(200).send({ message: "Recipe sudah tidak disukai", result: getData.rows });
 		} else {
-			return res.status(400).send("Data tidak ditemukan");
+			return res.status(404).send("Likes tidak ditemukan");
 		}
 	} catch (error) {
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program error!!!" });
 	}
 };
 
@@ -119,10 +117,10 @@ const getDataLiked = async (req, res) => {
 		if (getData.rowCount > 0) {
 			res.send({ total_data: getData.rowCount, result: getData.rows });
 		} else {
-			res.status(404).send("Data not found!!!!");
+			res.status(404).send({ message: "Data likes not found!!!!" });
 		}
 	} catch (error) {
-		res.status(400).send("Program error!!!");
+		res.status(400).json({ message: "Program error!!!" });
 	}
 };
 

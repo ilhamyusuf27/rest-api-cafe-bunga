@@ -1,13 +1,6 @@
 const model = require("../model/usersModel");
 const bcrypt = require("bcrypt");
 const cloudinary = require("../middleware/cloudinary");
-// const fs = require('fs');
-// const { promisify } = require('util');
-
-// const unlinkAsync = promisify(fs.unlink);
-
-// const Cryptojs = require('crypto-js');
-// const { mode } = require('crypto-js');
 
 const getDataUsers = async (req, res) => {
 	try {
@@ -16,13 +9,12 @@ const getDataUsers = async (req, res) => {
 		const getData = await model.getAllData();
 		const data = await model.getAllDataPagination({ currentPage, limit });
 		if (data.rowCount > 0) {
-			res.send({ total_data: getData.rowCount, result: data.rows, page: currentPage, limit });
+			res.status(200).json({ total_data: getData.rowCount, result: data.rows, page: currentPage, limit });
 		} else {
-			res.status(404).send("Data not found");
+			res.status(404).json({ message: "Data users not found" });
 		}
 	} catch (error) {
-		// console.log(error)
-		res.status(400).send("Program error!");
+		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
 
@@ -32,12 +24,15 @@ const getDataById = async (req, res) => {
 		// console.log(user_id);
 		const data = await model.getDataById(user_id);
 		if (data.rowCount > 0) {
-			res.send({ result: data.rows });
+			res.status(200).json({ result: data.rows });
 		} else {
-			res.status(404).send("Data not found");
+			res.status(404).json({ message: `User with id-${user_id} not found!!!` });
 		}
 	} catch (error) {
-		res.status(400).send("Program error!");
+		if (error.code === "22P02") {
+			return res.status(406).json({ message: "User id must be a number" });
+		}
+		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
 
@@ -46,33 +41,27 @@ const insertNewUser = async (req, res) => {
 		const { name, phone_number, email, password, rePassword } = req.body;
 		const photo_profil = req?.file?.path || null;
 		const passwordValidation = password === rePassword;
-		// console.log(req.body);
 		if (password.length < 8) {
-			// await unlinkAsync(req.file.path);
-			res.status(401).send("Password length must be more than 8 character");
+			res.status(401).json({ message: "Password length must be more than 8 character" });
 		} else {
 			if (passwordValidation) {
 				const salt = bcrypt.genSaltSync(15);
 				const hash = bcrypt.hashSync(password, salt);
-				await model.insertDataUser({ name: name.trim(), phone_number: phone_number.trim(), email: email.trim(), password: hash, photo_profil });
-				const getDataByEmail = await model.getDataByEmail(email);
-				res.send({
+				const data = await model.insertDataUser({ name: name.trim(), phone_number: phone_number.trim(), email: email.trim(), password: hash, photo_profil });
+
+				res.status(200).json({
 					message: "Data added successfully",
-					result: getDataByEmail.rows[0],
+					result: data.rows[0],
 				});
 			} else {
-				// await unlinkAsync(req.file.path);
-				res.status(401).send("Password invalid");
+				res.status(401).json({ message: "Password and confirm password must be the same" });
 			}
 		}
 	} catch (error) {
-		if (error.constraint === "uc_email") {
-			// await unlinkAsync(req.file.path);
-			res.status(401).send("Email already exist");
+		if (error.code === "23505") {
+			res.status(401).json({ message: "Email already exist" });
 		} else {
-			// await unlinkAsync(req.file.path);
-			console.log(error);
-			res.send("error");
+			res.status(400).json({ message: "Program Error!!!" });
 		}
 	}
 };
@@ -91,16 +80,15 @@ const updateUser = async (req, res) => {
 			let inputPhoto = photo_profil || checkData.rows[0]?.photo_profil;
 			const updateData = await model.updateDataUser({ name: inputName, phone_number: inputPhoneNumber, email: inputEmail, photo_profil: inputPhoto, user_id });
 			if (updateData) {
-				res.send("Data berhasil diubah");
+				res.status(200).json({ message: `Data user dengan id-${user_id} berhasil di update` });
 			} else {
-				res.status(400).send("Data failed to change");
+				res.status(400).json({ message: `Data user dengan id-${user_id} gagal di update` });
 			}
 		} else {
-			res.status(404).send("Data not found");
+			res.status(404).json({ message: `User dengan id-${user_id} tidak ditemukan` });
 		}
 	} catch (error) {
-		console.log(error);
-		res.status(400).send("Program error!");
+		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
 
@@ -114,16 +102,15 @@ const updateImageUser = async (req, res) => {
 			let inputPhoto = photo_profil || checkData.rows[0]?.photo_profil;
 			const updateData = await model.updateImageUser({ photo_profil: inputPhoto, user_id });
 			if (updateData) {
-				res.send("Data berhasil diubah");
+				res.status(200).json({ message: "Data images berhasil diubah" });
 			} else {
-				res.status(400).send("Data failed to change");
+				res.status(400).json({ message: "Data failed to change" });
 			}
 		} else {
-			res.status(404).send("Data not found");
+			res.status(404).json({ message: `User dengan id-${user_id} tidak ditemukan` });
 		}
 	} catch (error) {
-		console.log(error);
-		res.status(400).send("Program error!");
+		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
 
@@ -133,13 +120,12 @@ const deleteUser = async (req, res) => {
 		const getData = await model.getDataById(user_id);
 		if (getData.rowCount > 0) {
 			await model.deleteDataUser(user_id);
-			res.send(`User id:${user_id} berhasil dihapus`);
+			res.status(200).json({ message: `User id:${user_id} berhasil dihapus` });
 		} else {
-			res.status(400).send("Data failed to delete");
+			res.status(400).json({ message: "Data failed to delete" });
 		}
 	} catch (error) {
-		console.log(error);
-		res.status(400).send("Program error!");
+		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
 
