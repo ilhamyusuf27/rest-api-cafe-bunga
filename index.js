@@ -12,6 +12,7 @@ const comments = require("./routes/commentRoutes");
 const login = require("./routes/loginRoutes");
 const save = require("./routes/saveRoutes");
 const like = require("./routes/likeRoutes");
+const auth = require("./routes/authRoutes");
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
 
@@ -25,6 +26,7 @@ app.use(cors(corsOptions));
 
 app.use("/images/recipes", express.static("images/recipes"));
 app.use("/images/user", express.static("images/users"));
+app.use("/", auth);
 app.use("/", users);
 app.use("/", recipes);
 app.use("/", comments);

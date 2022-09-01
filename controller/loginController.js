@@ -13,7 +13,7 @@ const login = async (req, res) => {
 			const { user_id, name, email: email_user, photo_profil } = getDataByEmail.rows[0];
 			const checkPassword = bcrypt.compareSync(password, getDataByEmail.rows[0].password);
 			if (checkPassword) {
-				const accessToken = jwt.sign({ user_id, name, email_user }, process.env.SECRET_KEY, { expiresIn: "1d" });
+				const accessToken = jwt.sign({ user_id, name, email_user }, process.env.SECRET_KEY, { expiresIn: "30m" });
 				res.status(200).json({
 					message: "Login successfully",
 					token: accessToken,

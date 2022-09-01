@@ -51,8 +51,8 @@ const getDataByEmail = (email) => {
 const insertDataUser = (props) => {
 	return new Promise((resolve, reject) => {
 		db.query(
-			"INSERT INTO users (name, phone_number, email, password, photo_profil) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-			[props.name, props.phone_number, props.email, props.password, props.photo_profil],
+			"INSERT INTO users (name, phone_number, email, password, email_token) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+			[props.name, props.phone_number, props.email, props.password, props.email_token],
 			(error, result) => {
 				if (error) {
 					reject(error);
@@ -104,4 +104,28 @@ const deleteDataUser = (user_id) => {
 	});
 };
 
-module.exports = { getAllData, getDataById, getDataByEmail, insertDataUser, updateDataUser, deleteDataUser, getAllDataPagination, updateImageUser };
+const findToken = (token) => {
+	return new Promise((resolve, reject) => {
+		db.query("SELECT * FROM users WHERE email_token = $1", [token], (error, result) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(result);
+			}
+		});
+	});
+};
+const verifiedEmail = (data) => {
+	const { token, isverified, user_id } = data;
+	return new Promise((resolve, reject) => {
+		db.query("UPDATE users SET email_token=$1, isverified=$2 WHERE user_id = $3 RETURNING *", [token, isverified, user_id], (error, result) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(result);
+			}
+		});
+	});
+};
+
+module.exports = { getAllData, getDataById, getDataByEmail, insertDataUser, updateDataUser, deleteDataUser, getAllDataPagination, updateImageUser, findToken, verifiedEmail };
