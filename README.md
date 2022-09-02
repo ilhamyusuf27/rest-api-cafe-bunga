@@ -142,6 +142,10 @@ CLOUD_SECRET=
 
 # jwt
 SECRET_KEY=
+
+# email
+EMAIL=
+PASS_EMAIL=
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>

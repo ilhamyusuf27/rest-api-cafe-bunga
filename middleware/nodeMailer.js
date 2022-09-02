@@ -1,3 +1,4 @@
+require("dotenv").config();
 const nodemailer = require("nodemailer");
 
 const sendMail = async (data) => {
@@ -6,8 +7,8 @@ const sendMail = async (data) => {
 	const transporter = nodemailer.createTransport({
 		service: "gmail",
 		auth: {
-			user: "recipenation.noreply@gmail.com",
-			pass: "fluehyrftvljagkr",
+			user: process.env.EMAIL,
+			pass: process.env.PASS_EMAIL,
 		},
 		tls: {
 			rejectUnauthorized: false,
