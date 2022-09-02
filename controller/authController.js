@@ -72,7 +72,7 @@ const insertNewUser = async (req, res) => {
 					.catch((err) => console.log(err));
 
 				res.status(200).json({
-					message: "Data added successfully",
+					message: "Data added successfully. Verification email is sent to your email!!!",
 					result: data.rows[0],
 				});
 			} else {
