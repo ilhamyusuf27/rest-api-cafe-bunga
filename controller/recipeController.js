@@ -83,8 +83,9 @@ const getRecipeByIdParams = async (req, res) => {
 const insertNewRecipe = async (req, res) => {
 	try {
 		const { user_id, title, ingredients, video_link } = req.body;
-		const uploadImage = await cloudinary.uploader.upload(req.file.path, { folder: "recipe" });
-		const recipe_images = uploadImage.secure_url;
+
+		const uploadImage = req?.file ? await cloudinary.uploader.upload(req?.file?.path, { folder: "recipe" }) : null;
+		const recipe_images = req?.file ? uploadImage.secure_url : null;
 		const getDataById = await userModel.getDataById(user_id);
 		if (getDataById.rowCount === 0) {
 			res.status(404).json({ message: `User id-${user_id} not found` });
@@ -101,6 +102,7 @@ const insertNewRecipe = async (req, res) => {
 			}
 		}
 	} catch (error) {
+		console.log(error);
 		res.status(400).json({ message: "Program Error!!!" });
 	}
 };
@@ -165,12 +167,20 @@ const updateRecipe = async (req, res) => {
 const deleteDataRecipe = async (req, res) => {
 	try {
 		const { id } = req.params;
+		const { user } = req;
+
 		const getData = await model.getDataById(id);
-		if (getData.rowCount > 0) {
-			await model.deleteRecipe(id);
-			res.status(200).json({ message: `Recipe: ${getData.rows[0].title} berhasil dihapus` });
+		const validation = getData.rows[0].user_id === user?.user_id || getData.rows[0].role === "admin";
+
+		if (validation) {
+			if (getData.rowCount > 0) {
+				await model.deleteRecipe(id);
+				res.status(200).json({ message: `Recipe: ${getData.rows[0].title} berhasil dihapus` });
+			} else {
+				res.status(400).json({ message: `Recipe failed to delete` });
+			}
 		} else {
-			res.status(400).json({ message: `Recipe failed to delete` });
+			res.status(400).json({ message: `You are prohibited from deleting this recipe.` });
 		}
 	} catch (error) {
 		res.status(400).json({ message: "Program Error!!!" });

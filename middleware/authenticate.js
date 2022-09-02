@@ -21,4 +21,19 @@ const authenticationToken = (req, res, next) => {
 	}
 };
 
-module.exports = { authenticationToken };
+const decode = (req, res, next) => {
+	try {
+		const authHeader = req.headers?.authorization;
+		if (authHeader === undefined) {
+			return res.status(403).json({ message: "Please input token first" });
+		}
+		const token = authHeader.substring(7, authHeader.length);
+		const decode = jwt.decode(token, { complete: true });
+		req.user = decode.payload;
+		next();
+	} catch (error) {
+		res.status(400).json({ message: "Program error!!" });
+	}
+};
+
+module.exports = { authenticationToken, decode };
