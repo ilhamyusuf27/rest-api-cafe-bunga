@@ -6,7 +6,11 @@ CREATE TABLE IF NOT EXISTS public.users
     email character varying(150) COLLATE pg_catalog."default" NOT NULL,
     password character varying(150) COLLATE pg_catalog."default" NOT NULL,
     photo_profil character varying(150) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
-    CONSTRAINT users_pkey PRIMARY KEY (user_id)
+    email_token character varying(255) COLLATE pg_catalog."default",
+    isverified boolean DEFAULT false,
+    role character varying(10) COLLATE pg_catalog."default" DEFAULT 'user'::character varying,
+    CONSTRAINT users_pkey PRIMARY KEY (user_id),
+    CONSTRAINT users_email_key UNIQUE (email)
 )
 
 CREATE TABLE IF NOT EXISTS public.recipe
@@ -40,30 +44,6 @@ CREATE TABLE IF NOT EXISTS public.comments
         ON UPDATE NO ACTION
         ON DELETE CASCADE,
     CONSTRAINT fk_user FOREIGN KEY (user_id)
-        REFERENCES public.users (user_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
-)
-
-CREATE TABLE IF NOT EXISTS public.users_likes
-(
-    likes_id integer NOT NULL DEFAULT nextval('users_likes_likes_id_seq'::regclass),
-    recipe_id integer,
-    user_id integer,
-    CONSTRAINT users_likes_pkey PRIMARY KEY (likes_id),
-    CONSTRAINT fk_users FOREIGN KEY (user_id)
-        REFERENCES public.users (user_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
-)
-
-CREATE TABLE IF NOT EXISTS public.users_saves
-(
-    saves_id integer NOT NULL DEFAULT nextval('users_saves_saves_id_seq'::regclass),
-    recipe_id integer,
-    user_id integer,
-    CONSTRAINT users_saves_pkey PRIMARY KEY (saves_id),
-    CONSTRAINT fk_users FOREIGN KEY (user_id)
         REFERENCES public.users (user_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
