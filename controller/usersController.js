@@ -129,4 +129,18 @@ const deleteUser = async (req, res) => {
 	}
 };
 
-module.exports = { getDataUsers, getDataById, updateUser, deleteUser, insertNewUser, updateImageUser };
+const userValidation = async (req, res, next) => {
+	const { user_id } = req.body;
+	const getData = await model.getDataById(user_id);
+	if (!getData.rowCount) {
+		return res.status(400).json({ message: "Users not found" });
+	}
+	const { role } = getData.rows[0];
+
+	if (role === "user") {
+		return res.status(400).json({ message: "Sorry, users are not allowed!" });
+	}
+	next();
+};
+
+module.exports = { getDataUsers, getDataById, updateUser, deleteUser, insertNewUser, updateImageUser, userValidation };
