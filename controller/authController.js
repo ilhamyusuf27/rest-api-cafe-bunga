@@ -16,7 +16,7 @@ const login = async (req, res) => {
 			const { user_id, name, email: email_user, photo_profil, isverified } = getDataByEmail.rows[0];
 
 			if (!isverified) {
-				return res.status(401).json({ message: "Please verified your email first!" });
+				return res.status(401).json({ message: "Please verified your email first!", code: "EM001" });
 			}
 
 			const checkPassword = bcrypt.compareSync(password, getDataByEmail.rows[0].password);
