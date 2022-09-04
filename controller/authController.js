@@ -88,6 +88,27 @@ const insertNewUser = async (req, res) => {
 	}
 };
 
+const sendEmails = async (req, res) => {
+	try {
+		const { email } = req.body;
+		const findEmail = await userModel.getDataByEmail(email);
+
+		if (!findEmail.rowCount) {
+			return res.status(400).json({ message: "Email not found" });
+		}
+
+		if (findEmail.rows[0].isverified) {
+			return res.status(400).json({ message: "Already verified" });
+		}
+
+		sendMail(findEmail.rows[0]).catch(() => res.status(400).json({ message: "Failed send email, please try again later!" }));
+		res.status(200).json({ message: "Verification email is sent to your email!!!" });
+	} catch (error) {
+		console.log(error);
+		res.status(400).json({ message: "Program Error!!!" });
+	}
+};
+
 const verifiedEmail = async (req, res) => {
 	const { token } = req.query;
 	const getData = await userModel.findToken(token);
@@ -122,4 +143,4 @@ const refreshToken = (req, res) => {
 	}
 };
 
-module.exports = { login, insertNewUser, verifiedEmail, refreshToken };
+module.exports = { login, insertNewUser, verifiedEmail, refreshToken, sendEmails };
